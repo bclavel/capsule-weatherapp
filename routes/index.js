@@ -31,7 +31,7 @@ router.post('/addCity', function(req, res, next) {
 
   var newCity = {
     name: req.body.name,
-    desc: 'Horrible',
+    desc: 'Pluie et vent',
     img: '/images/picto-1.png',
     temp_min: 0,
     temp_max: 30,
