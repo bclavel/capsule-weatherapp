@@ -1,0 +1,57 @@
+#layout {
+  margin-bottom: 30px;
+  margin-top: 30px;
+}
+
+#fictiveimage {
+  width: 100%;
+}
+
+#citysearch {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 10px;
+
+}
+
+@media screen and (max-width: 660px) {
+  .formtypetext {
+    max-width: 190px;
+    margin-right: 15px;
+    margin-left: 7px;
+  }
+
+  .formclickbutton {
+    width: 100px;
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+}
+
+.meteodescription {
+  padding-top: 30px;
+  padding-bottom: 30px;
+  min-width: 305px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+}
+
+.formclickbutton {
+  background-color: rgb(255, 191, 67);
+  border: none;
+}
+.formclickbutton:hover {
+  background-color: rgb(255, 140, 67);
+}
+
+.deletepicto {
+  color: rgb(255, 191, 67);
+  cursor: pointer;
+}
+
+.deletepicto:hover {
+  color: rgb(255, 140, 67);
+}
