@@ -1,68 +1,133 @@
 var express = require('express');
 var router = express.Router();
 var request = require('request');
+var mongoose = require('mongoose');
 
+var options = {
+  connectTimeoutMS: 5000,
+  useNewUrlParser: true
+}
+mongoose.connect('mongodb+srv://benoit:benoit@newt-0267k.mongodb.net/cityDB?retryWrites=true',
+    options,
+    function(err) {
+     console.log(err);
+    }
+);
 
-var cityList = []
-// var cityList = [{
-//   name: 'Paris',
-//   desc: 'Couvert',
-//   img: '/images/picto-1.png',
-//   temp_min: 9,
-//   temp_max: 22,
-//   },{
-//   name: 'Lyon',
-//   desc: 'Pluvieux',
-//   img: '/images/picto-1.png',
-//   temp_min: 8,
-//   temp_max: 17,
-//   },{
-//   name: 'Bordeaux',
-//   desc: 'Soleil',
-//   img: '/images/picto-1.png',
-//   temp_min: 12,
-//   temp_max: 26,
-//   }]
-
-router.get('/', function(req, res, next) {
-  res.render('index', {
-    cityList
-  });
+var citySchema = mongoose.Schema({
+  name: String,
+  desc: String,
+  img: String,
+  temp_min: Number,
+  temp_max: Number,
 });
 
+
+var cityModel = mongoose.model('cities', citySchema);
+
+var cityList = []
+
+
+// Route Home
+router.get('/', function(req, res, next) {
+  cityModel.find(
+    function (err, cities) {
+      res.render('index', {
+        cityList: cities
+      });
+    }
+  )
+});
+
+// Route Ajout de ville
 router.post('/addCity', function(req, res, next) {
 
   request(`http://api.openweathermap.org/data/2.5/weather?q=${req.body.name}&lang=fr&units=metric&APPID=2bb941fd1e5a72c668364991246fc919`, function(error, response, body) {
     body = JSON.parse(body);
-    console.log(body);
 
     if (body.cod == 404 || body.cod == 400) {
-      console.log(body.cod);
-      res.render('index', {
-        cityList
-      });
+      cityModel.find(
+        function (err, cities) {
+          res.render('index', {
+            cityList: cities
+          });
+        }
+      )
     } else {
-        var newCity = {
-        name: req.body.name,
-        desc: body.weather[0].description,
-        img: body.weather[0].icon,
-        temp_min: Math.floor(body.main.temp_min),
-        temp_max: Math.floor(body.main.temp_max),
-      }
-      cityList.push(newCity)
-      console.log(cityList);
-      res.render('index', {
-        cityList
+      var newCity = new cityModel ({
+      name: req.body.name,
+      desc: body.weather[0].description,
+      img: body.weather[0].icon,
+      temp_min: Math.floor(body.main.temp_min),
+      temp_max: Math.floor(body.main.temp_max),
       });
+
+      newCity.save(
+        function (error, city) {
+          cityModel.find(
+            function (err, cities) {
+              res.render('index', {
+                cityList: cities
+              });
+            }
+          )
+        }
+      )
     };
   });
 });
 
+
+// Route suppression de ville
 router.get('/deleteCity', function(req, res, next) {
-  cityList.splice(req.query.position,1)
-  res.render('index', {
-    cityList
-  });
-});
+  cityModel.deleteOne(
+    {_id: req.query.id},
+    function (error) {
+      cityModel.find(
+        function (err, cities) {
+          res.render('index', {
+            cityList: cities
+          });
+        }
+      )
+    });
+  }
+)
+
+
+// Route suppression de Marseille
+router.get('/deleteMarseille', function(req, res, next) {
+  cityModel.deleteMany(
+    {name: req.query.name},
+    function (error) {
+      cityModel.find(
+        function (err, cities) {
+          res.render('index', {
+            cityList: cities
+          });
+        }
+      )
+    });
+  }
+)
+
+
+// Route update température
+router.get('/updateCity', function(req, res, next) {
+  cityModel.updateOne(
+    {_id: req.query.id},
+    {temp_min: 100, temp_max: 100},
+    function (error, raw) {
+      cityModel.find(
+        function (err, cities) {
+          res.render('index', {
+            cityList: cities
+          });
+        }
+      )
+    });
+  }
+)
+
 
 module.exports = router;

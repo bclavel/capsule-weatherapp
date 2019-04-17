@@ -32,14 +32,16 @@
                 <div class="offset-1 col-6">
                   <span><%= cityList[i].desc %></span>
                   <img src="http://openweathermap.org/img/w/<%= cityList[i].img %>.png" alt="<%= cityList[i].desc %>">
-                  <span class="badge badge-warning"><%= cityList[i].temp_min %>°C</span>
-                  <span class="badge badge-secondary"><%= cityList[i].temp_max %>°C</span>
+                  <span class="badge badge-secondary"><%= cityList[i].temp_min %>°C</span>
+                  <span class="badge badge-warning"><%= cityList[i].temp_max %>°C</span>
                 </div>
                 <div class="offset-2 col-1">
-                  <a href="/deleteCity?position=<%=i%>"><i class="far fa-times-circle deletepicto"></i></a>
+                  <a href="/deleteCity?id=<%=cityList[i]._id%>"><i class="far fa-times-circle deletepicto"></i></a>
+                  <a href="/updateCity?id=<%=cityList[i]._id%>"><i class="fab fa-hotjar deletepicto"></i></a>
                 </div>
               </div>
             <% } %>
+            <a href="/deleteMarseille?name=marseille"><button type="submit" class="btn btn-danger my-2">L'OM ça dégage</button></a>
           </div>
         </div>
       </div>
