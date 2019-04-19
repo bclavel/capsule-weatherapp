@@ -21,15 +21,7 @@ router.post('/sign-up', function(req, res, next) {
       }
       // Si l'email saisi n'existe pas en BDD, on créé une session avec les données saises
       if (emailInDB == false) {
-        req.session.signUpUsernameFromFront = req.body.signUpUsernameFromFront
-        req.session.signUpEmailFromFront = req.body.signUpEmailFromFront
-        req.session.signUpPasswordFromFront = req.body.signUpPasswordFromFront
-
-        var user = {
-          username: req.session.signUpUsernameFromFront,
-          email: req.session.signUpEmailFromFront,
-          password: req.session.signUpPasswordFromFront
-        }
+        req.session.user = users;
         // On créé un nouveau user
         var newUser = new userModel ({
           username: req.body.signUpUsernameFromFront,
@@ -40,15 +32,8 @@ router.post('/sign-up', function(req, res, next) {
         newUser.save(
           function (error, user) {}
         )
-        // On affiche la liste des villes avec toutes les villes de la BDD
-        cityModel.find(
-          function(err, citiesFromDataBase) {
-            res.render('index', {
-              cityList: citiesFromDataBase,
-              user
-            });
-          }
-        );
+        // On redirige vers cities
+        res.redirect('/cities');
       // Si l'email saisi existe déjà en BDD, ça dégage
       } else {
         res.redirect('/');
@@ -73,25 +58,10 @@ router.post('/sign-in', function(req, res, next) {
 
       // Si le couple email + mdp existe, on créé une session avec les données saises + le username de l'entrée de la BDD trouvée avec le findOne
       } else {
-        req.session.UsernameFromDB = users.username;
-        req.session.signInEmailFromFront = req.body.signInEmailFromFront;
-        req.session.signInPasswordFromFront = req.body.signInPasswordFromFront;
-
-        var user = {
-          username: req.session.UsernameFromDB,
-          email: req.session.signInEmailFromFront,
-          password: req.session.signInPasswordFromFront
-        }
-
-        // On affiche la liste des villes avec toutes les villes de la BDD
-        cityModel.find(
-          function(err, citiesFromDataBase) {
-            res.render('index', {
-              cityList: citiesFromDataBase,
-              user
-            });
-          }
-        );
+        req.session.user = users;
+        console.log(req.session.user);
+        // On redirige vers cities
+        res.redirect('/cities');
       }
     }
   )

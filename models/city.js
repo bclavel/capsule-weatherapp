@@ -7,6 +7,8 @@ var citySchema = mongoose.Schema({
   img: String,
   temp_min: Number,
   temp_max: Number,
+  lat: Number,
+  lon: Number,
 });
 
 // Export pour utilisation dans les routes (collection + schéma)

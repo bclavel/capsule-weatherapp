@@ -9,6 +9,7 @@ var cityList = []
 
 // Route / qui redirige vers la page login
 router.get('/', function(req, res, next) {
+  req.session.user = null;
   res.redirect('/users/');
 });
 
@@ -16,14 +17,14 @@ router.get('/', function(req, res, next) {
 // Route Cities
 router.get('/cities', function(req, res, next) {
   // Vérification si le user a une session active, sinon ça dégage
-  if (user == undefined) {
+  if (!req.session.user) {
     res.redirect('/');
   } else {
     cityModel.find(
       function (err, cities) {
         res.render('index', {
           cityList: cities,
-          user
+          user: req.session.user
         });
       }
     )
@@ -42,7 +43,7 @@ router.post('/addCity', function(req, res, next) {
         function (err, cities) {
           res.render('index', {
             cityList: cities,
-            user
+            user: req.session.user
           });
         }
       )
@@ -54,6 +55,8 @@ router.post('/addCity', function(req, res, next) {
       img: body.weather[0].icon,
       temp_min: Math.floor(body.main.temp_min),
       temp_max: Math.floor(body.main.temp_max),
+      lat: body.coord.lat,
+      lon: body.coord.lon,
       });
       // Ajout de la nouvelle ville dans la BDD et redirection vers la liste des villes
       newCity.save(
@@ -62,12 +65,14 @@ router.post('/addCity', function(req, res, next) {
             function (err, cities) {
               res.render('index', {
                 cityList: cities,
-                user
+                user: req.session.user
               });
             }
           )
         }
       )
+      // Récupèréation des coordonnées GPS de la ville
+      // var marker = L.marker([req.body.coord.lat, req.body.coord.lon]).addTo(mymap).bindPopup(req.body.name);
     };
   });
 });
@@ -83,7 +88,7 @@ router.get('/deleteCity', function(req, res, next) {
         function (err, cities) {
           res.render('index', {
             cityList: cities,
-            user
+            user: req.session.user
           });
         }
       )
@@ -102,7 +107,7 @@ router.get('/deleteMarseille', function(req, res, next) {
         function (err, cities) {
           res.render('index', {
             cityList: cities,
-            user
+            user: req.session.user
           });
         }
       )
@@ -121,7 +126,8 @@ router.get('/updateCity', function(req, res, next) {
       cityModel.find(
         function (err, cities) {
           res.render('index', {
-            cityList: cities
+            cityList: cities,
+            user: req.session.user
           });
         }
       )

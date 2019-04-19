@@ -119,3 +119,8 @@ input:-webkit-autofill:focus {
 .psg {
   width: 200px;
 }
+
+#worldmap {
+  height: 400px;
+  width: 100%;
+}
